@@ -75,16 +75,12 @@ public:
   size_t size() const noexcept { return sz; }
 
   // индексация
-  T& operator[](size_t ind)
+  T& operator[](size_t ind) noexcept
   {
-      if ((ind < 0) || (ind >= sz))
-          throw "exeption";
       return pMem[ind];
   }
-  const T& operator[](size_t ind) const
+  const T& operator[](size_t ind) const noexcept
   {
-      if ((ind < 0) || (ind >= sz))
-          throw "exeption";
       return pMem[ind];
   }
   // индексация с контролем
@@ -105,7 +101,9 @@ public:
   bool operator==(const TDynamicVector& v) const noexcept
   {
       if (sz != v.sz) return false;
-      return (memcmp(pMem, v.pMem, sz * sizeof(T)) + 1) % 2;
+      for (size_t i = 0; i < sz; i++)
+          if (pMem[i] != v.pMem[i]) return false;
+      return true;
   }
   bool operator!=(const TDynamicVector& v) const noexcept
   {
@@ -214,22 +212,25 @@ public:
 
   using TDynamicVector<TDynamicVector<T>>::operator[];
   using TDynamicVector<TDynamicVector<T>>::size;
+  using TDynamicVector<TDynamicVector<T>>::at;
 
   // сравнение
   bool operator==(const TDynamicMatrix& m) const noexcept
   {
-      if (size() != m.size()) return false;
-      for (size_t i = 0; i < size(); i++)
-          if (pMem[i] != m.pMem[i]) return false;
-      return true;
+          //if (size() != m.size()) return false;
+          //for (size_t i = 0; i < size(); i++)
+          //    if (pMem[i] != m.pMem[i]) return false;
+          //return true;
+      return TDynamicVector<TDynamicVector<T>>::operator==(TDynamicVector<TDynamicVector<T>>(m));
   }
 
   bool operator!=(const TDynamicMatrix& m) const noexcept
   {
-      if (size() != m.size()) return true;
-      for (size_t i = 0; i < size(); i++)
-          if (pMem[i] == m.pMem[i]) return false;
-      return true;
+      //if (size() != m.size()) return true;
+      //for (size_t i = 0; i < size(); i++)
+      //    if (pMem[i] == m.pMem[i]) return false;
+      //return true;
+      return TDynamicVector<TDynamicVector<T>>::operator!=(TDynamicVector<TDynamicVector<T>>(m));
   }
 
   // матрично-скалярные операции
